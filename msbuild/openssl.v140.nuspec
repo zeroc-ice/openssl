@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>openssl.v140</id>
+    <version>1.0.2.1</version>
+    <authors>xdm, bernardn</authors>
+    <licenseUrl>https://github.com/zeroc-ice/openssl/tree/OpenSSL_1_0_2k/LICENSE</licenseUrl>
+    <projectUrl>http://www.openssl.org</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>OpenSSL libraries</description>
+    <tags>openssl native</tags>
+  </metadata>
+</package>

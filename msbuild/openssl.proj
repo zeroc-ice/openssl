@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+
+  <!-- Custom task to download files -->
+    <UsingTask TaskName="DownloadFile"
+               TaskFactory="CodeTaskFactory"
+               AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+      <ParameterGroup>
+        <Address ParameterType="System.String" Required="true"/>
+        <FileName ParameterType="System.String" Required="true" />
+      </ParameterGroup>
+      <Task>
+        <Reference Include="System" />
+        <Code Type="Fragment" Language="cs">
+          <![CDATA[
+            new System.Net.WebClient().DownloadFile(Address, FileName);
+          ]]>
+        </Code>
+      </Task>
+    </UsingTask>
+
+    <!-- Nuget executable -->
+    <PropertyGroup>
+      <NugetExe>$(MSBuildThisFileDirectory)nuget.exe</NugetExe>
+    </PropertyGroup>
+
+    <!-- Download nuget.exe if not present -->
+    <Target Name="GetNuget" Condition="!Exists('$(NugetExe)')">
+      <DownloadFile Address="https://dist.nuget.org/win-x86-commandline/v3.4.4/NuGet.exe" FileName="$(NugetExe)" />
+    </Target>
+
+  <PropertyGroup>
+      <OpenSSLVersion>1.0.2</OpenSSLVersion>
+      <OpenSSLDir>C:\ProgramData\ZeroC\openssl-$(OpenSSLVersion)</OpenSSLDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+      <Projects Include="openssl.nuget.targets">
+        <Properties>Configuration=Release;Platform=Win32;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(DefaultPlatformToolset)-Win32-Release</Properties>
+      </Projects>
+      <Projects Include="openssl.nuget.targets">
+        <Properties>Configuration=Debug;Platform=Win32;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(DefaultPlatformToolset)-Win32-Debug</Properties>
+      </Projects>
+      <Projects Include="openssl.nuget.targets">
+        <Properties>Configuration=Release;Platform=x64;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(DefaultPlatformToolset)-x64-Release</Properties>
+      </Projects>
+      <Projects Include="openssl.nuget.targets">
+        <Properties>Configuration=Debug;Platform=x64;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(DefaultPlatformToolset)-x64-Debug</Properties>
+      </Projects>
+  </ItemGroup>
+
+  <Target Name="Build" DependsOnTargets="GetNuget">
+    <MSBuild Projects="openssl.build.targets" Properties="Configuration=$(Configuration);Platform=$(Platform);OpenSSLVersion=$(OpenSSLVersion);OpenSSLDir=$(OpenSSLDir);InstallPrefix=$(DefaultPlatformToolset)-$(Platform)-$(Configuration)"/>
+  </Target>
+  <!-- Create nuget packages -->
+  <Target Name="NugetPack" DependsOnTargets="GetNuget">
+    <RemoveDir Directories="openssl.$(DefaultPlatformToolset)" />
+
+    <MSBuild Projects="@(Projects)"
+             Properties="%(Properties)" BuildInParallel="False" />
+
+    <Copy SourceFiles="openssl.$(DefaultPlatformToolset).nuspec"
+          DestinationFolder="openssl.$(DefaultPlatformToolset)" />
+    <Copy SourceFiles="openssl.$(DefaultPlatformToolset).targets"
+          DestinationFiles="openssl.$(DefaultPlatformToolset)\build\native\openssl.$(DefaultPlatformToolset).targets" />
+    <Exec Command="$(NugetExe) pack -NoPackageAnalysis -NonInteractive"
+          WorkingDirectory="openssl.$(DefaultPlatformToolset)"/>
+  </Target>
+
+</Project>
