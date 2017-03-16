@@ -38,21 +38,21 @@
 
   <ItemGroup>
       <Projects Include="openssl.nuget.targets">
-        <Properties>Configuration=Release;Platform=Win32;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(DefaultPlatformToolset)-Win32-Release</Properties>
+        <Properties>Configuration=Release;Platform=Win32;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(MSBuildThisFileDirectory)\$(DefaultPlatformToolset)-Win32-Release</Properties>
       </Projects>
       <Projects Include="openssl.nuget.targets">
-        <Properties>Configuration=Debug;Platform=Win32;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(DefaultPlatformToolset)-Win32-Debug</Properties>
+        <Properties>Configuration=Debug;Platform=Win32;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(MSBuildThisFileDirectory)\$(DefaultPlatformToolset)-Win32-Debug</Properties>
       </Projects>
       <Projects Include="openssl.nuget.targets">
-        <Properties>Configuration=Release;Platform=x64;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(DefaultPlatformToolset)-x64-Release</Properties>
+        <Properties>Configuration=Release;Platform=x64;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(MSBuildThisFileDirectory)\$(DefaultPlatformToolset)-x64-Release</Properties>
       </Projects>
       <Projects Include="openssl.nuget.targets">
-        <Properties>Configuration=Debug;Platform=x64;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(DefaultPlatformToolset)-x64-Debug</Properties>
+        <Properties>Configuration=Debug;Platform=x64;PackageDirectory=openssl.$(DefaultPlatformToolset);InstallPrefix=$(MSBuildThisFileDirectory)\$(DefaultPlatformToolset)-x64-Debug</Properties>
       </Projects>
   </ItemGroup>
 
   <Target Name="Build" DependsOnTargets="GetNuget">
-    <MSBuild Projects="openssl.build.targets" Properties="Configuration=$(Configuration);Platform=$(Platform);OpenSSLVersion=$(OpenSSLVersion);OpenSSLDir=$(OpenSSLDir);InstallPrefix=$(DefaultPlatformToolset)-$(Platform)-$(Configuration)"/>
+    <MSBuild Projects="openssl.build.targets" Properties="Configuration=$(Configuration);Platform=$(Platform);OpenSSLVersion=$(OpenSSLVersion);OpenSSLDir=$(OpenSSLDir);InstallPrefix=$(MSBuildThisFileDirectory)\$(DefaultPlatformToolset)-$(Platform)-$(Configuration)"/>
   </Target>
   <!-- Create nuget packages -->
   <Target Name="NugetPack" DependsOnTargets="GetNuget">
