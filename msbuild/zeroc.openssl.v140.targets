@@ -10,7 +10,7 @@
         </ClCompile>
         <Link>
             <AdditionalDependencies>libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-            <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+            <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)lib\$(Platform)\$(_OpenSSLConfiguration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
         </Link>
     </ItemDefinitionGroup>
     <Target Name="OpenSSL_CopyDLLs_v140" AfterTargets="Build" Condition="'$(PlatformToolset)' == 'v140'">
