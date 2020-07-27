@@ -24,10 +24,10 @@
 
     <Target Name="SignPackage" AfterTargets="Build" Condition="Exists('$(SIGN_CERTIFICATE)')">
         <Message Text="Signing libeay32.dll" />
-        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\libeay32.dll" EchoOff="yes"/>
+        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\libcrypto.dll" EchoOff="yes"/>
         <Message Text="Signing openssl.exe" />
         <Exec Command="$(SignCommand) $(InstallPrefix)\bin\openssl.exe" EchoOff="yes"/>
         <Message Text="Signing ssleay32.dll" />
-        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\ssleay32.dll" EchoOff="yes"/>
+        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\libssl.dll" EchoOff="yes"/>
     </Target>
 </Project>
