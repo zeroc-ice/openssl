@@ -12,6 +12,8 @@
         <ConfigurationName Condition="'$(Platform)|$(Configuration)' == 'x64|Release'">VC-WIN64A</ConfigurationName>
         <PlatformName Condition="'$(Platform)' == 'Win32'">x86</PlatformName>
         <PlatformName Condition="'$(Platform)' == 'x64'">amd64</PlatformName>
+        <LibSuffix Condition="'$(Platform)' == 'Win32'">-1_1</LibSuffix>
+        <LibSuffix Condition="'$(Platform)' == 'x64'">-1_1-x64</LibSuffix>
     </PropertyGroup>
 
     <Target Name="Build">
@@ -24,10 +26,10 @@
 
     <Target Name="SignPackage" AfterTargets="Build" Condition="Exists('$(SIGN_CERTIFICATE)')">
         <Message Text="Signing libcrypto.dll" />
-        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\libcrypto.dll" EchoOff="yes"/>
+        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\libcrypto$(LibSuffix).dll" EchoOff="yes"/>
         <Message Text="Signing openssl.exe" />
         <Exec Command="$(SignCommand) $(InstallPrefix)\bin\openssl.exe" EchoOff="yes"/>
         <Message Text="Signing libssl.dll" />
-        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\libssl.dll" EchoOff="yes"/>
+        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\libssl$(LibSuffix).dll" EchoOff="yes"/>
     </Target>
 </Project>
