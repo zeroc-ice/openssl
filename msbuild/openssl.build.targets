@@ -18,10 +18,8 @@
         <RemoveDir  Directories="$(InstallPrefix)"/>
         <Exec Command="git clean -dxf --exclude msbuild" WorkingDirectory="$(MSBuildThisFileDirectory)\.."/>
         <Exec Command="perl Configure $(ConfigurationName) no-asm --prefix=$(InstallPrefix) --openssldir=C:\ProgramData\ZeroC\openssl-$(OpenSSLVersion) enable-static-engine" WorkingDirectory="$(MSBuildThisFileDirectory)\.."/>
-        <Exec Command="ms\do_ms" WorkingDirectory="$(MSBuildThisFileDirectory)\.." Condition="'$(Platform)' == 'Win32'"/>
-        <Exec Command="ms\do_win64a" WorkingDirectory="$(MSBuildThisFileDirectory)\.." Condition="'$(Platform)' == 'x64'"/>
-        <Exec Command="nmake -f ms\ntdll.mak" WorkingDirectory="$(MSBuildThisFileDirectory)\.."/>
-        <Exec Command="nmake -f ms\ntdll.mak install" WorkingDirectory="$(MSBuildThisFileDirectory)\.."/>
+        <Exec Command="nmake" WorkingDirectory="$(MSBuildThisFileDirectory)\.."/>
+        <Exec Command="nmake install" WorkingDirectory="$(MSBuildThisFileDirectory)\.."/>
     </Target>
 
     <Target Name="SignPackage" AfterTargets="Build" Condition="Exists('$(SIGN_CERTIFICATE)')">
