@@ -9,20 +9,20 @@
             <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
         </ClCompile>
         <Link>
-            <AdditionalDependencies>libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+            <AdditionalDependencies>libcrypto.lib;libssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
             <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)lib\$(Platform)\$(_OpenSSLConfiguration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
         </Link>
     </ItemDefinitionGroup>
     <Target Name="OpenSSL_CopyDLLs_v140" AfterTargets="Build" Condition="'$(PlatformToolset)' == 'v140'">
-        <Copy SourceFiles="$(MSBuildThisFileDirectory)\bin\$(Platform)\$(_OpenSSLConfiguration)\libeay32.dll"
+        <Copy SourceFiles="$(MSBuildThisFileDirectory)\bin\$(Platform)\$(_OpenSSLConfiguration)\libcrypto.dll"
               DestinationFolder="$(OutDir)"
               SkipUnchangedFiles="true"/>
-        <Copy SourceFiles="$(MSBuildThisFileDirectory)\bin\$(Platform)\$(_OpenSSLConfiguration)\ssleay32.dll"
+        <Copy SourceFiles="$(MSBuildThisFileDirectory)\bin\$(Platform)\$(_OpenSSLConfiguration)\libssl.dll"
               DestinationFolder="$(OutDir)"
               SkipUnchangedFiles="true"/>
     </Target>
     <Target Name="OpenSSL_RemoveDlls_v140" BeforeTargets="Clean" Condition="'$(PlatformToolset)' == 'v140'">
-        <Delete Files="$(OutDir)\libeay32.dll"/>
-        <Delete Files="$(OutDir)\ssleay32.dll"/>
+        <Delete Files="$(OutDir)\libcrypto.dll"/>
+        <Delete Files="$(OutDir)\libssl.dll"/>
     </Target>
 </Project>
