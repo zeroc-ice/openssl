@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+    <PropertyGroup>
+        <TimeStampServer>http://timestamp.verisign.com/scripts/timstamp.dll</TimeStampServer>
+        <SignCommand>signtool sign /f "$(SIGN_CERTIFICATE)" /p $(SIGN_PASSWORD) /t $(TimeStampServer)</SignCommand>
+        <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+        <Platform Condition="'$(Platform)' == ''">Win32</Platform>
+        <ConfigurationName Condition="'$(Platform)|$(Configuration)' == 'Win32|Debug'">debug-VC-WIN32</ConfigurationName>
+        <ConfigurationName Condition="'$(Platform)|$(Configuration)' == 'Win32|Release'">VC-WIN32</ConfigurationName>
+        <ConfigurationName Condition="'$(Platform)|$(Configuration)' == 'x64|Debug'">debug-VC-WIN64A</ConfigurationName>
+        <ConfigurationName Condition="'$(Platform)|$(Configuration)' == 'x64|Release'">VC-WIN64A</ConfigurationName>
+        <PlatformName Condition="'$(Platform)' == 'Win32'">x86</PlatformName>
+        <PlatformName Condition="'$(Platform)' == 'x64'">amd64</PlatformName>
+    </PropertyGroup>
+
+    <Target Name="Build">
+        <RemoveDir  Directories="$(InstallPrefix)"/>
+        <Exec Command="git clean -dxf --exclude msbuild" WorkingDirectory="$(MSBuildThisFileDirectory)\.."/>
+        <Exec Command="perl Configure $(ConfigurationName) no-asm --prefix=$(InstallPrefix) --openssldir=C:\ProgramData\ZeroC\openssl-$(OpenSSLVersion) enable-static-engine" WorkingDirectory="$(MSBuildThisFileDirectory)\.."/>
+        <Exec Command="ms\do_ms" WorkingDirectory="$(MSBuildThisFileDirectory)\.." Condition="'$(Platform)' == 'Win32'"/>
+        <Exec Command="ms\do_win64a" WorkingDirectory="$(MSBuildThisFileDirectory)\.." Condition="'$(Platform)' == 'x64'"/>
+        <Exec Command="nmake -f ms\ntdll.mak" WorkingDirectory="$(MSBuildThisFileDirectory)\.."/>
+        <Exec Command="nmake -f ms\ntdll.mak install" WorkingDirectory="$(MSBuildThisFileDirectory)\.."/>
+    </Target>
+
+    <Target Name="SignPackage" AfterTargets="Build" Condition="Exists('$(SIGN_CERTIFICATE)')">
+        <Message Text="Signing libeay32.dll" />
+        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\libeay32.dll" EchoOff="yes"/>
+        <Message Text="Signing openssl.exe" />
+        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\openssl.exe" EchoOff="yes"/>
+        <Message Text="Signing ssleay32.dll" />
+        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\ssleay32.dll" EchoOff="yes"/>
+    </Target>
+</Project>

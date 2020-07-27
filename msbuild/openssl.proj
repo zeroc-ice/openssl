@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+
+  <!-- Custom task to download files -->
+    <UsingTask TaskName="DownloadFile"
+               TaskFactory="CodeTaskFactory"
+               AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+      <ParameterGroup>
+        <Address ParameterType="System.String" Required="true"/>
+        <FileName ParameterType="System.String" Required="true" />
+      </ParameterGroup>
+      <Task>
+        <Reference Include="System" />
+        <Code Type="Fragment" Language="cs">
+          <![CDATA[
+            new System.Net.WebClient().DownloadFile(Address, FileName);
+          ]]>
+        </Code>
+      </Task>
+    </UsingTask>
+
+    <!-- Nuget executable -->
+    <PropertyGroup>
+      <NugetExe>$(MSBuildThisFileDirectory)nuget.exe</NugetExe>
+    </PropertyGroup>
+
+    <!-- Download nuget.exe if not present -->
+    <Target Name="GetNuget" Condition="!Exists('$(NugetExe)')">
+      <DownloadFile Address="https://dist.nuget.org/win-x86-commandline/v4.9.2/nuget.exe" FileName="$(NugetExe)" />
+    </Target>
+
+  <PropertyGroup>
+      <OpenSSLVersion>1.1.1</OpenSSLVersion>
+      <OpenSSLDir>C:\ProgramData\ZeroC\openssl-$(OpenSSLVersion)</OpenSSLDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+      <Projects Include="openssl.nuget.targets">
+        <Properties>Configuration=Release;Platform=Win32;PackageDirectory=zeroc.openssl.$(DefaultPlatformToolset);InstallPrefix=$(MSBuildThisFileDirectory)\$(DefaultPlatformToolset)-Win32-Release</Properties>
+      </Projects>
+      <Projects Include="openssl.nuget.targets">
+        <Properties>Configuration=Debug;Platform=Win32;PackageDirectory=zeroc.openssl.$(DefaultPlatformToolset);InstallPrefix=$(MSBuildThisFileDirectory)\$(DefaultPlatformToolset)-Win32-Debug</Properties>
+      </Projects>
+      <Projects Include="openssl.nuget.targets">
+        <Properties>Configuration=Release;Platform=x64;PackageDirectory=zeroc.openssl.$(DefaultPlatformToolset);InstallPrefix=$(MSBuildThisFileDirectory)\$(DefaultPlatformToolset)-x64-Release</Properties>
+      </Projects>
+      <Projects Include="openssl.nuget.targets">
+        <Properties>Configuration=Debug;Platform=x64;PackageDirectory=zeroc.openssl.$(DefaultPlatformToolset);InstallPrefix=$(MSBuildThisFileDirectory)\$(DefaultPlatformToolset)-x64-Debug</Properties>
+      </Projects>
+  </ItemGroup>
+
+  <Target Name="Build" DependsOnTargets="GetNuget">
+    <MSBuild Projects="openssl.build.targets" Properties="Configuration=$(Configuration);Platform=$(Platform);OpenSSLVersion=$(OpenSSLVersion);OpenSSLDir=$(OpenSSLDir);InstallPrefix=$(MSBuildThisFileDirectory)\$(DefaultPlatformToolset)-$(Platform)-$(Configuration)"/>
+  </Target>
+  <!-- Create nuget packages -->
+  <Target Name="NugetPack" DependsOnTargets="GetNuget">
+    <RemoveDir Directories="zeroc.openssl.$(DefaultPlatformToolset)" />
+
+    <MSBuild Projects="@(Projects)"
+             Properties="%(Properties)" BuildInParallel="False" />
+
+    <Copy SourceFiles="zeroc.openssl.$(DefaultPlatformToolset).nuspec"
+          DestinationFolder="zeroc.openssl.$(DefaultPlatformToolset)" />
+    <Copy SourceFiles="zeroc.openssl.$(DefaultPlatformToolset).targets"
+          DestinationFiles="zeroc.openssl.$(DefaultPlatformToolset)\build\native\zeroc.openssl.$(DefaultPlatformToolset).targets" />
+    <Exec Command="$(NugetExe) pack -NoPackageAnalysis -NonInteractive"
+          WorkingDirectory="zeroc.openssl.$(DefaultPlatformToolset)"/>
+  </Target>
+
+</Project>

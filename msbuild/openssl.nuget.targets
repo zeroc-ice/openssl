@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="NugetPack" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+
+    <!-- Dynamic libraries and import libraries -->
+    <ItemGroup>
+        <Executables Include="$(InstallPrefix)\bin\*.exe"/>
+        <Libraries Include="$(InstallPrefix)\bin\*.dll"/>
+        <ImportLibraries Include="$(InstallPrefix)\lib\*.lib"/>
+        <Headers Include="$(InstallPrefix)\include\**\*.h" />
+    </ItemGroup>
+
+    <Target Name="NugetPack">
+        <Copy Condition="'$(Platform)|$(Configuration)' == 'Win32|Release'"
+              SourceFiles="@(Headers)" DestinationFolder="$(PackageDirectory)\build\native\include\%(Headers.RecursiveDir)" />
+        <Copy SourceFiles="@(Executables)" DestinationFolder="$(PackageDirectory)\build\native\bin\$(Platform)\$(Configuration)" />
+        <Copy SourceFiles="@(Libraries)" DestinationFolder="$(PackageDirectory)\build\native\bin\$(Platform)\$(Configuration)" />
+        <Copy SourceFiles="@(ImportLibraries)" DestinationFolder="$(PackageDirectory)\build\native\lib\$(Platform)\$(Configuration)" />
+    </Target>
+</Project>
