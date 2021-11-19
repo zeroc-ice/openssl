@@ -1,6 +1,6 @@
 # OPENSSL.V141
 
-This package contains debug and release builds of the OpenSSL 1.1.1g library. It was built with Visual Studio 2017 (V141).
+This package contains debug and release builds of the OpenSSL 1.1.1l library. It was built with Visual Studio 2017 (V141).
 
 ## Source
 
