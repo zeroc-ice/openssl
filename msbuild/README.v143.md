@@ -1,0 +1,26 @@
+# OPENSSL.V143
+
+This package contains debug and release builds of the OpenSSL 1.1.1q library. It was built with Visual Studio 2022 (V143).
+
+## Source
+
+The source code used to build this package is available at https://github.com/zeroc-ice/openssl/tree/msvc.
+
+## Build Instructions
+
+git clone git@github.com:zeroc-ice/openssl.git -b msvc-1.1.1q
+cd openssl
+
+From a Visual Studio 2022 x86 Command promt run the following commands
+
+    MSBuild msbuild\openssl.proj /t:NugetPack /p:Platform=Win32 /p:Configuration=Debug
+    MSBuild msbuild\openssl.proj /t:NugetPack /p:Platform=Win32 /p:Configuration=Release
+
+From a Visual Studio 2022 x64 Command promt run the following commands
+
+    MSBuild msbuild\openssl.proj /t:NugetPack /p:Platform=x64 /p:Configuration=Debug
+    MSBuild msbuild\openssl.proj /t:NugetPack /p:Platform=x64 /p:Configuration=Release
+
+Then you can create the openssl.v143 nuget package running the following command
+
+    MSBuild msbuild\openssl.proj /t:NugetPack
