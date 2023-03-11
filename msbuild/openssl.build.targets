@@ -2,8 +2,10 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
     <PropertyGroup>
+        <SIGN_SHA1 Condition="'$(SIGN_SHA1)' == ''">8D86DEC2699A6F6504D591B32B12D06909A57E48</SIGN_SHA1>
         <TimeStampServer>http://timestamp.digicert.com</TimeStampServer>
-        <SignCommand>signtool sign /f "$(SIGN_CERTIFICATE)" /p $(SIGN_PASSWORD) /t $(TimeStampServer)</SignCommand>
+        <SignCommandSHA1>/f "$(SIGN_CERTIFICATE)" /v /sha1 $(SIGN_SHA1) /p $(SIGN_PASSWORD) /tr $(TimeStampServer) /td sha1 /fd sha1</SignCommandSHA1>
+        <SignCommandSHA256>/f "$(SIGN_CERTIFICATE)" /v /sha1 $(SIGN_SHA1) /p $(SIGN_PASSWORD) /tr $(TimeStampServer) /td sha256 /fd sha256 /as</SignCommandSHA256>
         <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
         <Platform Condition="'$(Platform)' == ''">Win32</Platform>
         <ConfigurationName Condition="'$(Platform)|$(Configuration)' == 'Win32|Debug'">debug-VC-WIN32</ConfigurationName>
@@ -26,10 +28,13 @@
 
     <Target Name="SignPackage" AfterTargets="Build" Condition="Exists('$(SIGN_CERTIFICATE)')">
         <Message Text="Signing libcrypto.dll" />
-        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\libcrypto$(LibSuffix).dll" EchoOff="yes"/>
+        <Exec Command="$(SignCommandSHA1) $(InstallPrefix)\bin\libcrypto$(LibSuffix).dll" EchoOff="yes"/>
+        <Exec Command="$(SignCommandSHA256) $(InstallPrefix)\bin\libcrypto$(LibSuffix).dll" EchoOff="yes"/>
         <Message Text="Signing openssl.exe" />
-        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\openssl.exe" EchoOff="yes"/>
+        <Exec Command="$(SignCommandSHA1) $(InstallPrefix)\bin\openssl.exe" EchoOff="yes"/>
+        <Exec Command="$(SignCommandSHA256) $(InstallPrefix)\bin\openssl.exe" EchoOff="yes"/>
         <Message Text="Signing libssl.dll" />
-        <Exec Command="$(SignCommand) $(InstallPrefix)\bin\libssl$(LibSuffix).dll" EchoOff="yes"/>
+        <Exec Command="$(SignCommandSHA1) $(InstallPrefix)\bin\libssl$(LibSuffix).dll" EchoOff="yes"/>
+        <Exec Command="$(SignCommandSHA256) $(InstallPrefix)\bin\libssl$(LibSuffix).dll" EchoOff="yes"/>
     </Target>
 </Project>
